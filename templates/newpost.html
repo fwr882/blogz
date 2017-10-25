@@ -1,23 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+        .error{
+            color: red;
+        }
+</style>
     <h1>New Blog Post</h1>
-    <form action="/" form method='post'>
-        <label>
+    <form action="/newpost" form method='POST'>
+        <label for="title">
             Title:
             <br>
-            <input type="text" name= 'title' method="post" value='{{request.form['title']}}'/>
-            <span class="error" style="color:red">{{title_error}}</span>
+            <input type="text"  name= "title" id="title"  value=""/>
+            <span class="error">{{title_error}}</span>
         </label>
         <br>
-        <label>
+        <label for="title">
             Type your content here: 
             <br>
-            <input type="text" name= 'body' method="post" style="height: 300px; width:300px; margin:10px 0; padding: 10px; border-radius: 10px;" value='{{request.form['body']}}'/>
-            <span class="error" style="color:red;">{{body_error}}</span>
+            <input type="textarea"name="body"  id="body"  value="" />
+            <span class="error">{{body_error}}</span>
         </label>
         <br>
-        <input type="submit" value='Submit' />
+        <input type="submit" value='Submit Post' />
     </form>
 
 {% endblock %}

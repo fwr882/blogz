@@ -23,24 +23,18 @@ class Blog(db.Model):
         return '<Body %r>' % self.body
 
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/')
 def index():
-    if request.method=='POST':
-        title=request.form['title']
-        body=request.form['body']
-        new_blog = Blog(title, body)
-        if(title== ""):
-          title_error = "You need a title!"
-          return render_template('newpost.html', title_error=title_error)
-        if (body == ""):
-            body_error = "Sorry! the body needs to be filled!"
-            return render_template('newpost.html', body_error=body_error)
+    if request.args:
+        blog_id = request.args.get('id')
+        blog = Blog.query.get(blog_id)
+        return render_template("displaypost.html", blog=blog)
+    else:
+        posts = Blog.query.all()
+        return render_template('blog.html', title="build-a-blog", posts=posts)
+            
 
-        else:
-            db.session.add(new_blog)
-            db.session.commit()
-    blogs = Blog.query.all()
-    return render_template('blog.html', blogs=blogs)
+
 
 # @app.route('/blog', methods=['GET'])
 # def blog():
@@ -51,15 +45,36 @@ def index():
 
 @app.route('/newpost', methods=['GET','POST'])
 def newpost():
-       
-    return render_template('newpost.html')
-@app.route('/displaypost', methods=['GET'])
-def displaypost():
     if request.method == 'GET':
-        blog_id = request.args.get('id')
-        blog = Blog.query.get(blog_id)
+        return render_template("newpost.html")
 
-        return render_template('displaypost.html', blog=blog)
+    if request.method == 'POST':
+        title= request.form['title']
+        body=request.form['body']
+        title_error = ""
+        body_error =""
+        
+        if len(title) < 1:
+            title_error = "Please enter a title"
+        if len(body) < 1:
+            body_error = "please type inside the body before you submit"
+        else:
+            new_post = Blog(title, body)
+            db.session.add(new_post)
+            db.session.commit()
+            post_url = "/?id=" + str(new_post.id)
+            return redirect(post_url)
+        
+        return render_template("newpost.html", title="Add New Post", title_error=title_error, body_error=body_error)
+
+    #return render_template('newpost.html')
+# @app.route('/displaypost', methods=['GET'])
+# def displaypost():
+#     if request.method == 'GET':
+#         blog_id = request.args.get('id')
+#         blog = Blog.query.get(blog_id)
+
+#         return render_template('displaypost.html', blog=blog)
 
 
 #TODO make nav links that link to the main blog page and to add new blog page

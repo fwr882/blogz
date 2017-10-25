@@ -1,13 +1,8 @@
 <!doctype html>
 <html>
     <head>
-        <title>build-a-blog</title>
-        <style type ="text/css">
-            .error{
-                color: red;
-            }
-        </style>
-
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='styles/style.css') }}">
+        <title>{{title}}</title>
     </head>
 <body>
     <a href="/">Main Blog Page</a>
