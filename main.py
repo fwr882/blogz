@@ -28,7 +28,7 @@ class User(db.Model):
     password = db.Column(db.String(120))
     blogs = db.relationship('Blog', backref='owner')
 
-    def __init__(self, username, password,blo):
+    def __init__(self, username, password):
         self.username = username
         self.password = password
 
@@ -36,35 +36,39 @@ class User(db.Model):
     #      return '<Title %r>' % self.title
     #      return '<Body %r>' % self.body
 
-#This was at the index. changed route to /blog
+@app.before_request
+def require_login():
+     allowed_routes = ['login', 'signup','index','blog']
+     if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
+
 @app.route('/blog')
 def blog():
     if request.args:
         blog_id = request.args.get('id')
         blog = Blog.query.get(blog_id)
-        return render_template("displaypost.html", blog=blog)
-    else:
-        posts = Blog.query.all()
-        return render_template('blog.html', title="build-a-blog", posts=posts)
-
-
-
-# @app.route('/blog', methods=['GET'])
-# def blog():
-    
-#     return render_template('blog.html')
-    
-   #this is the new index 
-@app.route('/')
-def index(): 
-    if request.args:
         user_id = request.args.get('id')
         user = User.query.get(user_id)
-        return render_template("singleUser.html", user=user)
+        return render_template("displaypost.html", blog=blog, user=user)
     else:
+        posts = Blog.query.all()
         users = User.query.all()
-        return render_template('index.html', title="blogz", users=users)
-    
+        return render_template('blog.html', title="build-a-blog", posts=posts, users=users)
+
+# @app.route('/blog')
+# def users(): 
+#     if request.args:
+#         user_id = request.args.get('id')
+#         user = User.query.get(user_id)
+#         return render_template("singleUser.html", user=user)
+#     else:
+#         users = User.query.all()
+#         return render_template('index.html', title="blogz", users=users)
+
+@app.route('/')
+def index(): 
+    users = User.query.all()
+    return render_template('index.html', title="blogz", users=users)  
 
 @app.route('/newpost', methods=['GET','POST'])
 def newpost():
@@ -86,16 +90,11 @@ def newpost():
             new_post = Blog(title, body, owner)
             db.session.add(new_post)
             db.session.commit()
-            post_url = "/?id=" + str(new_post.id)
+            post_url = "blog?id=" + str(new_post.id)
             return redirect(post_url)
         
         return render_template("newpost.html", title="Add New Post", title_error=title_error, body_error=body_error)
 
-@app.before_request
-def require_login():
-     allowed_routes = ['login', 'signup','index','blog']
-     if request.endpoint not in allowed_routes and 'username' not in session:
-        return redirect('/login')
 
 @app.route('/login', methods=['GET','POST'])
 def login():

@@ -12,8 +12,13 @@
          <li>
              <h1><a href="/blog?id={{post.id}}">{{post.title}}</a></h1>
                 <p>{{post.body}}</p>
+                <p>written by {{post.owner.username}}</p>
         </li>
+
         {% endfor %}
+    
+
+    
     {% endif %}
     </ul>
 {% endblock %}
