@@ -28,7 +28,7 @@ class User(db.Model):
     password = db.Column(db.String(120))
     blogs = db.relationship('Blog', backref='owner')
 
-    def __init__(self, username, password):
+    def __init__(self, username, password,blo):
         self.username = username
         self.password = password
 
@@ -60,9 +60,9 @@ def index():
     if request.args:
         user_id = request.args.get('id')
         user = User.query.get(user_id)
-        return render_template("userpage.html", user=user)
+        return render_template("singleUser.html", user=user)
     else:
-        users = User.query.username()
+        users = User.query.all()
         return render_template('index.html', title="blogz", users=users)
     
 
