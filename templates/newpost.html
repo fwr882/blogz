@@ -1,11 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<style>
-        .error{
-            color: red;
-        }
-</style>
+
     <h1>New Blog Post</h1>
     <form action="/newpost" form method='POST'>
         <label for="title">
@@ -18,7 +14,7 @@
         <label for="title">
             Type your content here: 
             <br>
-            <input type="textarea"name="body"  id="body"  value="" />
+            <textarea name = body></textarea>
             <span class="error">{{body_error}}</span>
         </label>
         <br>
