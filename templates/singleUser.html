@@ -1,11 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>
-    <h2>test</h2>
     
-</p>
+    <h1 align="center">{{user.username}}</h1>
+    {% if posts|length == 0 %}
+    <p>No users made yet</p>
 
+    {% else %}
+    <ul>
+        {% for post in posts %}
+         <li>
+             <h1><a href="/blog?id={{post.id}}">{{post.title}}</a></h1>
+                <p>{{post.body}}</p>
+                <p>written by<a href="/blog?user={{post.owner.id}}">{{post.owner.username}}</a></p>
+        </li>
 
+        {% endfor %}
+    
+
+    
+    {% endif %}
+    </ul>
 {% endblock %}
-

@@ -31,29 +31,38 @@ class User(db.Model):
     def __init__(self, username, password):
         self.username = username
         self.password = password
-
     # def __repr__(self):
     #      return '<Title %r>' % self.title
     #      return '<Body %r>' % self.body
 
 @app.before_request
 def require_login():
-     allowed_routes = ['login', 'signup','index','blog']
-     if request.endpoint not in allowed_routes and 'username' not in session:
+    allowed_routes = ['login', 'signup','index','blog']
+    if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
+# @app.route('/singleUser')
+# def renderuserpage():
+#     if request.args.get('user'):
+#        user_id =request.args.get ('user')
+#        user = User.query.get(user_id)
+#        posts = Blog.query.filter_by(owner=user).all()
+#        return render_template('singleUser.html', posts=posts, user=user)
+
 @app.route('/blog')
-def blog():
-    if request.args:
+def blog():   
+    if request.args.get('user'):
+        user_id = request.args.get('user')
+        user = User.query.get(user_id)
+        posts = Blog.query.filter_by(owner=user).all()
+        return render_template('singleUser.html', posts=posts, user=user)
+    elif request.args.get('id'):
         blog_id = request.args.get('id')
         blog = Blog.query.get(blog_id)
-        user_id = request.args.get('id')
-        user = User.query.get(user_id)
-        return render_template("displaypost.html", blog=blog, user=user)
+        return render_template("displaypost.html", blog=blog)
     else:
         posts = Blog.query.all()
-        users = User.query.all()
-        return render_template('blog.html', title="build-a-blog", posts=posts, users=users)
+        return render_template('blog.html', title="build-a-blog", posts=posts)
 
 # @app.route('/blog')
 # def users(): 
